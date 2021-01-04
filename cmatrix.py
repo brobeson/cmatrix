@@ -12,11 +12,12 @@ def main():
 
     for compiler in compilers:
         for build_type in build_types:
+            print(f"\N{HAMMER} {compiler} {build_type}", end="")
             # TODO Let the user specify the build directory in the .cmatrix file.
             build_directory = os.path.join(
                 arguments.build_directory, f"cmatrix_{compiler}_{build_type}"
             )
-            subprocess.run(
+            build_result = subprocess.run(
                 [
                     "ctest",
                     "--build-and-test",
@@ -31,8 +32,16 @@ def main():
                     "--test-command",
                     "ctest",
                 ],
-                check=True,
+                check=False,
+                capture_output=True,
+                encoding="utf-8",
             )
+            with open(os.path.join(build_directory, "cmatrix.log"), "w") as log_file:
+                log_file.write(build_result.stdout)
+            if build_result.returncode == 0:
+                print(f"\r\u2705 {compiler} {build_type}")
+            else:
+                print(f"\r\u274c {compiler} {build_type}")
 
 
 def parse_command_line() -> argparse.Namespace:

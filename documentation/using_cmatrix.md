@@ -35,6 +35,43 @@ CMatrix will create this directory structure:
 
 For the latest command line options, run `python3 cmatrix.py --help`.
 
+CMatrix prints each build matrix element with one of the following status icons:
+
+| Icon | Meaning |
+|:---|:---|
+| :hammer: | The build is running. |
+| :white_check_mark: | The build succeeded. |
+| :x: | The build failed. |
+
+Example output is:
+
+```text
+:white_check_mark: gcc Release
+:x: gcc Debug
+:white_check_mark: clang Release
+:hammer: clang Debug
+```
+
+A build's final status is determined by the exit code returned by CMake.
+If the exit code is 0, the build succeeded.
+The build failed for any other exit code.
+
+Build output is written to *cmatrix.log* in the matrix element's build directory.
+Continuing our example, the build output is in these files:
+
+```text
+~/project/build/cmatrix_gcc_Release/cmatrix.log
+~/project/build/cmatrix_gcc_Debug/cmatrix.log
+~/project/build/cmatrix_clang_Release/cmatrix.log
+~/project/build/cmatrix_clang_Debug/cmatrix.log
+```
+
+> **Warning**
+>
+> Some build steps may produce warnings or errors, but still return 0 as the exit code.
+> One example is running Cppcheck via `CMAKE_CXX_CPPCHECK`.
+> Developers should double check the build log for this type of false negative.
+
 ## Configuring CMatrix
 
 CMatrix reads configuration options from two configuration files.
